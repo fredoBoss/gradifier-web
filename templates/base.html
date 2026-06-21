@@ -1,0 +1,13 @@
+<link
+  href="{{ url_for('static', filename='dist/styles.css') }}"
+  rel="stylesheet"
+/>
+<body class="grid grid-cols-12">
+  {% include 'header.html' %}
+
+  <div class="col-span-2">{% include 'sidebar.html' %}</div>
+
+  <div class="col-span-10">{% block content %}{% endblock %}</div>
+
+  <footer></footer>
+</body>

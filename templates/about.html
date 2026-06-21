@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../src/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Dashboard</title>
+  </head>
+  <body class="grid grid-cols-12">
+    <div id="header-placeholder" class="col-span-12"></div>
+
+    <div class="col-span-2">
+      <div id="sidebar-placeholder" class="p-1"></div>
+    </div>
+
+    <script>
+      $(function () {
+        $("#header-placeholder").load("header.html");
+        $("#sidebar-placeholder").load("sidebar.html");
+      });
+    </script>
+
+    <main class="col-span-10 bg-white mt-8">
+      <h4 class="text-3xl font-bold mb-4">About</h4>
+
+      <div class="flex justify-items-start gap-8">
+        <div class="mt-12 relative select-none">
+          <div
+            class="bg-yellow-200 border-yellow-200 border-2 px-3 py-2 rounded-md font-semibold flex justify-between w-40 cursor-pointer"
+            onclick="toggleDropdown('farmDropdown')"
+          >
+            Block
+            <img
+              src="../icons/icons8-down-arrow-48.png"
+              alt="Dropdown Icon"
+              class="w-5 h-5"
+            />
+          </div>
+          <div
+            id="farmDropdown"
+            class="hidden absolute w-40 bg-yellow-200 border border-gray-300 rounded-sm shadow-sm z-10"
+          >
+            <a href="#" class="block px-3 py-2 hover:bg-yellow-300">Block 1</a>
+            <a href="#" class="block px-3 py-2 hover:bg-yellow-300">Block 2</a>
+            <a href="#" class="block px-3 py-2 hover:bg-yellow-300">Block 3</a>
+            <a href="#" class="block px-3 py-2 hover:bg-yellow-300">Block 4</a>
+            <a href="#" class="block px-3 py-2 hover:bg-yellow-300">Block 5</a>
+          </div>
+        </div>
+
+        <div class="mt-12 relative select-none">
+          <div
+            class="bg-yellow-200 border-yellow-200 border-2 px-3 py-2 rounded-md font-semibold flex justify-between w-40 cursor-pointer"
+            onclick="toggleDropdown('dateDropdown')"
+          >
+            Select Date
+            <img
+              src="../icons/icons8-down-arrow-48.png"
+              alt="Dropdown Icon"
+              class="w-5 h-5"
+            />
+          </div>
+          <div
+            id="dateDropdown"
+            class="hidden absolute w-40 bg-yellow-200 border border-gray-300 rounded-sm shadow-sm z-10"
+          >
+            <a href="#" class="block px-3 py-2 hover:bg-yellow-300"
+              >2024-07-26</a
+            >
+            <a href="#" class="block px-3 py-2 hover:bg-yellow-300"
+              >2024-07-25</a
+            >
+            <a href="#" class="block px-3 py-2 hover:bg-yellow-300"
+              >2024-07-24</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8">
+        <div style="width: 80%; margin: auto">
+          <canvas id="myPieChart"></canvas>
+        </div>
+      </div>
+      <script>
+        const ctx = document.getElementById("myPieChart");
+        new Chart(ctx, {
+          type: "pie",
+          data: {
+            labels: ["Block 1", "Block 2", "Block 3", "Block 4", "Block 5"],
+            datasets: [
+              {
+                label: "# of Votes",
+                data: [12, 19, 3, 5, 2],
+                backgroundColor: [
+                  "rgba(255, 99, 132, 0.2)",
+                  "rgba(54, 162, 235, 0.2)",
+                  "rgba(255, 206, 86, 0.2)",
+                  "rgba(75, 192, 192, 0.2)",
+                  "rgba(153, 102, 255, 0.2)",
+                ],
+                borderColor: [
+                  "rgba(255, 99, 132, 1)",
+                  "rgba(54, 162, 235, 1)",
+                  "rgba(255, 206, 86, 1)",
+                  "rgba(75, 192, 192, 1)",
+                  "rgba(153, 102, 255, 1)",
+                ],
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "bottom", // Place legend at the bottom
+              },
+            },
+          },
+        });
+      </script>
+    </main>
+
+    <script>
+      function toggleDropdown(dropdownId) {
+        const dropdown = document.getElementById(dropdownId);
+        dropdown.classList.toggle("hidden");
+      }
+
+      window.onclick = function (event) {
+        if (!event.target.matches(".cursor-pointer")) {
+          const dropdowns = document.querySelectorAll(".absolute");
+          dropdowns.forEach((dropdown) => {
+            if (!dropdown.classList.contains("hidden")) {
+              dropdown.classList.add("hidden");
+            }
+          });
+        }
+      };
+    </script>
+  </body>
+</html>
