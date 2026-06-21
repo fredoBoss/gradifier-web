@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings — Gradifier</title>
+  <link rel="manifest" href="/manifest.json" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/src/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Poppins:wght@300;400;500;600&display=swap');
+    * { font-family: 'Poppins', sans-serif; }
+    .font-brand { font-family: 'Montserrat', sans-serif; }
+    .input-field { width:100%; background:#f9fafb; border:1px solid #e5e7eb; color:#374151; border-radius:.75rem; padding:.625rem .875rem; font-size:.875rem; transition:border-color .2s,box-shadow .2s; outline:none; }
+    .input-field:focus { border-color:#34d399; box-shadow:0 0 0 3px rgba(52,211,153,0.1); }
+    .input-field::placeholder { color:#9ca3af; }
+    .btn-primary { background:linear-gradient(135deg,#10b981,#059669); box-shadow:0 4px 14px rgba(16,185,129,0.3); transition:all .25s; }
+    .btn-primary:hover { box-shadow:0 6px 20px rgba(16,185,129,0.45); transform:translateY(-1px); }
+    .eye-btn { position:absolute; right:.75rem; top:50%; transform:translateY(-50%); color:#9ca3af; cursor:pointer; }
+    .eye-btn:hover { color:#6b7280; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+  <div id="header-placeholder" class="sticky top-0 z-30"></div>
+
+  <div class="flex flex-1">
+    <div id="sidebar-placeholder" class="flex-shrink-0"></div>
+
+    <main class="flex-1 p-6 overflow-x-hidden min-w-0">
+
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800 font-brand">Settings</h1>
+        <p class="text-sm text-gray-500 mt-0.5">Manage your account information and security</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Personal Information -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <div class="flex items-center gap-2 mb-5">
+            <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600"><i class="fa-solid fa-user text-sm"></i></div>
+            <div>
+              <h2 class="text-base font-semibold text-gray-800">Personal Information</h2>
+              <p class="text-xs text-gray-400">Update your name and email</p>
+            </div>
+          </div>
+
+          <div id="profileMsg" class="hidden text-sm px-4 py-3 rounded-xl mb-4"></div>
+
+          <form id="profileForm" class="flex flex-col gap-4">
+            <div class="flex items-center gap-4">
+              <div class="relative flex-shrink-0">
+                <img id="photoPreview" src="/img/fred.png" alt="Profile" class="w-16 h-16 rounded-full object-cover border-2 border-gray-200" />
+              </div>
+              <div class="min-w-0">
+                <p id="currentName" class="text-sm font-medium text-gray-700">Your Name</p>
+                <p id="currentEmail" class="text-xs text-gray-400 truncate">your@email.com</p>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">Full Name</label>
+              <input type="text" id="inputName" name="name" placeholder="Your full name" class="input-field" required />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">Email Address</label>
+              <div class="relative">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none"><i class="fa-solid fa-envelope"></i></span>
+                <input type="email" id="inputEmail" name="email" placeholder="your@email.com" class="input-field" style="padding-left:2.25rem;" required />
+              </div>
+            </div>
+            <button type="submit" class="btn-primary text-white text-sm font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 mt-1">
+              <i class="fa-solid fa-floppy-disk"></i> Save Changes
+            </button>
+          </form>
+        </div>
+
+        <!-- Change Password -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <div class="flex items-center gap-2 mb-5">
+            <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-500"><i class="fa-solid fa-lock text-sm"></i></div>
+            <div>
+              <h2 class="text-base font-semibold text-gray-800">Change Password</h2>
+              <p class="text-xs text-gray-400">Use a strong password with 8+ characters</p>
+            </div>
+          </div>
+
+          <div id="passwordMsg" class="hidden text-sm px-4 py-3 rounded-xl mb-4"></div>
+
+          <form id="passwordForm" class="flex flex-col gap-4">
+            <div>
+              <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">Current Password</label>
+              <div class="relative">
+                <input type="password" id="currentPassword" name="current_password" placeholder="Enter current password" class="input-field" style="padding-right:2.5rem;" required />
+                <i id="toggleCurrentPassword" class="fa-solid fa-eye eye-btn"></i>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">New Password</label>
+              <div class="relative">
+                <input type="password" id="newPassword" name="new_password" placeholder="Enter new password" class="input-field" style="padding-right:2.5rem;" required />
+                <i id="toggleNewPassword" class="fa-solid fa-eye eye-btn"></i>
+              </div>
+              <p id="newPasswordMessage" class="text-xs mt-1 min-h-[1rem]"></p>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">Confirm Password</label>
+              <div class="relative">
+                <input type="password" id="confirmPassword" name="confirm_password" placeholder="Re-enter new password" class="input-field" style="padding-right:2.5rem;" required />
+                <i id="toggleConfirmPassword" class="fa-solid fa-eye eye-btn"></i>
+              </div>
+              <p id="confirmPasswordMessage" class="text-xs mt-1 min-h-[1rem]"></p>
+            </div>
+            <button type="submit" class="btn-primary text-white text-sm font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 mt-1">
+              <i class="fa-solid fa-shield-halved"></i> Update Password
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/header.js"></script>
+  <script src="/js/settings.js"></script>
+  <script>
+    loadHeader();
+    $(function() { $("#sidebar-placeholder").load("/components/sidebar.html"); });
+  </script>
+</body>
+</html>

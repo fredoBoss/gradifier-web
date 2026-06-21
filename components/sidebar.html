@@ -1,0 +1,110 @@
+<!-- Mobile backdrop -->
+<div id="sidebar-overlay"
+  class="fixed inset-0 bg-black/50 z-30 lg:hidden opacity-0 pointer-events-none transition-opacity duration-300"
+  onclick="closeSidebar()"></div>
+
+<!-- Sidebar -->
+<aside id="main-sidebar"
+  style="background:#064e3b;"
+  class="fixed inset-y-0 left-0 z-40 w-48 flex flex-col shadow-xl
+         -translate-x-full lg:translate-x-0 lg:static lg:h-full
+         transition-transform duration-300 ease-in-out">
+
+  <div class="flex items-center justify-between px-4 pt-4 pb-2 lg:hidden">
+    <span style="font-family:'Montserrat',sans-serif;color:#6ee7b7;" class="text-sm font-black tracking-tight">GRADIFIER</span>
+    <button onclick="closeSidebar()" class="text-white/50 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
+      <i class="fa-solid fa-xmark text-sm"></i>
+    </button>
+  </div>
+
+  <nav class="flex-1 overflow-y-auto pt-2 lg:pt-4 px-3">
+    <ul class="space-y-0.5">
+      <li>
+        <a href="/dashboard" id="dashboardLink"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors no-underline"
+          style="color:rgba(255,255,255,0.65);"
+          onmouseover="if(!this.classList.contains('active-link'))this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff'"
+          onmouseout="if(!this.classList.contains('active-link'))this.style.background='';this.style.color='rgba(255,255,255,0.65)'">
+          <i class="fa-solid fa-chart-pie w-4 text-center text-sm flex-shrink-0"></i>
+          <span class="text-sm font-medium">Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a href="/reports" id="reportsLink"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors no-underline"
+          style="color:rgba(255,255,255,0.65);"
+          onmouseover="if(!this.classList.contains('active-link'))this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff'"
+          onmouseout="if(!this.classList.contains('active-link'))this.style.background='';this.style.color='rgba(255,255,255,0.65)'">
+          <i class="fa-solid fa-file-lines w-4 text-center text-sm flex-shrink-0"></i>
+          <span class="text-sm font-medium">Reports</span>
+        </a>
+      </li>
+      <li>
+        <a href="/logs" id="logsLink"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors no-underline"
+          style="color:rgba(255,255,255,0.65);"
+          onmouseover="if(!this.classList.contains('active-link'))this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff'"
+          onmouseout="if(!this.classList.contains('active-link'))this.style.background='';this.style.color='rgba(255,255,255,0.65)'">
+          <i class="fa-solid fa-list-ul w-4 text-center text-sm flex-shrink-0"></i>
+          <span class="text-sm font-medium">Logs</span>
+        </a>
+      </li>
+      <li>
+        <a href="/settings" id="settingsLink"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors no-underline"
+          style="color:rgba(255,255,255,0.65);"
+          onmouseover="if(!this.classList.contains('active-link'))this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff'"
+          onmouseout="if(!this.classList.contains('active-link'))this.style.background='';this.style.color='rgba(255,255,255,0.65)'">
+          <i class="fa-solid fa-gear w-4 text-center text-sm flex-shrink-0"></i>
+          <span class="text-sm font-medium">Settings</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</aside>
+
+<script>
+  (function() {
+    const path = window.location.pathname;
+    const map = { '/dashboard':'dashboardLink', '/reports':'reportsLink', '/logs':'logsLink', '/settings':'settingsLink' };
+    for (const [p, id] of Object.entries(map)) {
+      if (path === p || path.startsWith(p + '?')) {
+        const el = document.getElementById(id);
+        if (el) { el.classList.add('active-link'); el.style.background='rgba(255,255,255,0.15)'; el.style.color='#fff'; }
+      }
+    }
+  })();
+
+  function toggleSidebar() {
+    const sidebar = document.getElementById('main-sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    if (sidebar.classList.contains('-translate-x-full')) {
+      sidebar.classList.remove('-translate-x-full');
+      overlay.classList.remove('opacity-0','pointer-events-none');
+      overlay.classList.add('opacity-100');
+    } else { closeSidebar(); }
+  }
+
+  function closeSidebar() {
+    const sidebar = document.getElementById('main-sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    if (sidebar) sidebar.classList.add('-translate-x-full');
+    if (overlay) { overlay.classList.remove('opacity-100'); overlay.classList.add('opacity-0','pointer-events-none'); }
+  }
+
+  document.querySelectorAll('#main-sidebar a').forEach(a => {
+    a.addEventListener('click', () => { if (window.innerWidth < 1024) closeSidebar(); });
+  });
+
+  function fixSidebarHeight() {
+    const sidebar = document.getElementById('main-sidebar');
+    if (!sidebar) return;
+    if (window.innerWidth >= 1024) {
+      const header = document.getElementById('header-placeholder');
+      sidebar.style.minHeight = (window.innerHeight - (header ? header.offsetHeight : 0)) + 'px';
+      sidebar.style.height = '';
+    } else { sidebar.style.minHeight = ''; sidebar.style.height = ''; }
+  }
+  fixSidebarHeight();
+  window.addEventListener('resize', fixSidebarHeight);
+</script>

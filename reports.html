@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reports — Gradifier</title>
+  <link rel="manifest" href="/manifest.json" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/src/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.2.1/dist/chartjs-plugin-zoom.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Poppins:wght@300;400;500;600&display=swap');
+    * { font-family:'Poppins',sans-serif; } .font-brand{font-family:'Montserrat',sans-serif;}
+    select{appearance:none;-webkit-appearance:none;} tbody tr:hover{background:#f0fdf4;}
+    .flatpickr-day{position:relative!important;}
+    .flatpickr-day.selected,.flatpickr-day.selected:hover{background:#059669!important;border-color:#059669!important;}
+    .flatpickr-day:hover:not(.selected){background:#d1fae5!important;} .flatpickr-day.today{border-color:#10b981!important;}
+    .harvest-dot{width:5px;height:5px;background:#10b981;border-radius:50%;position:absolute;bottom:2px;left:50%;transform:translateX(-50%);display:block;}
+    .flatpickr-day.selected .harvest-dot{background:#fff;}
+    .flatpickr-input{background:#f9fafb;border:1px solid #e5e7eb;color:#374151;font-size:.875rem;border-radius:.75rem;padding:.5rem .75rem;width:100%;outline:none;cursor:pointer;}
+    .flatpickr-input:focus{border-color:#34d399;box-shadow:0 0 0 1px #d1fae5;}
+    .view-tab{transition:all .2s;} .view-tab.active{background:#059669;color:#fff;border-color:#059669;}
+    .view-tab:not(.active){color:#6b7280;background:#fff;} .view-tab:not(.active):hover{border-color:#6ee7b7;color:#059669;}
+    .chart-scroll-container::-webkit-scrollbar{height:6px;} .chart-scroll-container::-webkit-scrollbar-track{background:#f3f4f6;border-radius:9999px;}
+    .chart-scroll-container::-webkit-scrollbar-thumb{background:#6ee7b7;border-radius:9999px;}
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+  <div id="header-placeholder" class="sticky top-0 z-30"></div>
+
+  <div class="flex flex-1">
+    <div id="sidebar-placeholder" class="flex-shrink-0"></div>
+
+    <main class="flex-1 p-6 overflow-x-hidden min-w-0">
+
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-800 font-brand">Reports</h1>
+          <p class="text-sm text-gray-500 mt-0.5">Weight summary by grade class over time</p>
+        </div>
+        <button onclick="exportToPDF2()" class="flex items-center gap-2 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-all"
+          style="background:linear-gradient(135deg,#10b981,#059669);box-shadow:0 4px 14px rgba(16,185,129,0.35);">
+          <i class="fa-solid fa-file-pdf"></i> Export PDF
+        </button>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-6">
+        <form method="get" id="filterForm" class="flex flex-wrap items-end gap-4">
+          <div class="flex flex-col gap-1 min-w-[150px]">
+            <label class="text-[11px] text-gray-400 font-medium uppercase tracking-wider">Block</label>
+            <div class="relative">
+              <select name="farm" id="farmSelect" onchange="this.form.submit()" class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-xl px-3 py-2 pr-8 focus:outline-none focus:border-emerald-400 cursor-pointer">
+                <option value="">All Blocks</option>
+                <option value="1">Block 1</option><option value="2">Block 2</option><option value="3">Block 3</option>
+                <option value="4">Block 4</option><option value="5">Block 5</option><option value="6">Block 6</option>
+                <option value="7">Block 7</option><option value="8">Block 8</option>
+              </select>
+              <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+            </div>
+          </div>
+          <div class="flex flex-col gap-1 min-w-[150px]">
+            <label class="text-[11px] text-gray-400 font-medium uppercase tracking-wider">Grade</label>
+            <div class="relative">
+              <select name="grade" id="gradeSelect" onchange="this.form.submit()" class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-xl px-3 py-2 pr-8 focus:outline-none focus:border-emerald-400 cursor-pointer">
+                <option value="">All Grades</option>
+                <option value="25BCP">25BCP</option><option value="30BCP">30BCP</option><option value="33BCP">33BCP</option>
+                <option value="30TR">30TR</option><option value="IF36TR">IF36TR</option><option value="IF38TR">IF38TR</option>
+              </select>
+              <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+            </div>
+          </div>
+          <div class="flex flex-col gap-1 min-w-[150px]">
+            <label class="text-[11px] text-gray-400 font-medium uppercase tracking-wider">Quick Range</label>
+            <div class="relative">
+              <select name="range" id="rangeSelect" onchange="applyQuickRange(this.value)" class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-xl px-3 py-2 pr-8 focus:outline-none focus:border-emerald-400 cursor-pointer">
+                <option value="">Custom</option>
+                <option value="this_week">This Week</option><option value="last_week">Last Week</option>
+                <option value="this_month">This Month</option><option value="last_month">Last Month</option>
+              </select>
+              <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+            </div>
+          </div>
+          <div class="flex flex-col gap-1 min-w-[210px]">
+            <label class="text-[11px] text-gray-400 font-medium uppercase tracking-wider">Date Range</label>
+            <input type="text" id="rangePicker" placeholder="Pick start &amp; end dates" readonly />
+            <input type="hidden" name="start" id="startDate" />
+            <input type="hidden" name="end"   id="endDate" />
+          </div>
+          <a href="/reports" class="text-xs text-gray-400 hover:text-red-500 flex items-center gap-1 no-underline transition-colors pb-2">
+            <i class="fa-solid fa-xmark"></i> Clear
+          </a>
+        </form>
+      </div>
+
+      <!-- Total Harvest Summary -->
+      <div id="harvest-summary" class="bg-white rounded-2xl border border-emerald-100 shadow-sm p-4 mb-4 flex flex-wrap items-center justify-between gap-4"
+           style="background:linear-gradient(135deg,#ecfdf5,#ffffff);">
+        <!-- Filled by reports.js -->
+      </div>
+
+      <!-- Boxes per Grade -->
+      <div id="boxes-container" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
+        <!-- Filled by reports.js -->
+      </div>
+
+      <!-- View Toggle -->
+      <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+        <div class="flex items-center gap-2">
+          <button id="tabChart" onclick="switchView('chart')" class="view-tab active text-xs font-semibold px-4 py-1.5 rounded-lg border border-gray-200 flex items-center gap-1.5">
+            <i class="fa-solid fa-chart-line text-xs"></i> Chart
+          </button>
+          <button id="tabTable" onclick="switchView('table')" class="view-tab text-xs font-semibold px-4 py-1.5 rounded-lg border border-gray-200 flex items-center gap-1.5">
+            <i class="fa-solid fa-table text-xs"></i> Table
+          </button>
+        </div>
+        <div id="chartTypeToggle" class="flex items-center gap-2">
+          <button id="typeLine"  onclick="switchChartType('line')"  class="view-tab active text-xs font-semibold px-4 py-1.5 rounded-lg border border-gray-200"><i class="fa-solid fa-chart-line text-xs"></i> Line</button>
+          <button id="typeBar"   onclick="switchChartType('bar')"   class="view-tab text-xs font-semibold px-4 py-1.5 rounded-lg border border-gray-200"><i class="fa-solid fa-chart-bar text-xs"></i> Bar</button>
+          <button id="typeMixed" onclick="switchChartType('mixed')" class="view-tab text-xs font-semibold px-4 py-1.5 rounded-lg border border-gray-200"><i class="fa-solid fa-chart-mixed text-xs"></i> Mixed</button>
+        </div>
+      </div>
+
+      <!-- Chart -->
+      <div id="chartView" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs text-gray-400 flex items-center gap-1.5"><i class="fa-solid fa-magnifying-glass-plus"></i> Scroll to zoom &bull; Drag to pan</span>
+          <button onclick="resetZoom()" class="text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 text-gray-500 hover:border-emerald-300 hover:text-emerald-600 transition-colors flex items-center gap-1.5">
+            <i class="fa-solid fa-arrows-rotate text-xs"></i> Reset Zoom
+          </button>
+        </div>
+        <div class="overflow-x-auto rounded-xl chart-scroll-container">
+          <div id="chartWrapper" style="height:380px;min-width:100%;"><canvas id="gradesChart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div id="tableView" class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden" style="display:none;">
+        <div class="overflow-x-auto">
+          <table class="min-w-full" id="dataTable">
+            <thead>
+              <tr style="background:#f0fdf4;border-bottom:2px solid #d1fae5;">
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style="color:#065f46;">No.</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style="color:#065f46;">Farm</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style="color:#065f46;">Date</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style="color:#065f46;">25BCP</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style="color:#065f46;">30BCP</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style="color:#065f46;">33BCP</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style="color:#065f46;">30TR</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style="color:#065f46;">IF36TR</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style="color:#065f46;">IF38TR</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style="color:#065f46;">Total (kg)</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" style="color:#065f46;">Boxes</th>
+              </tr>
+            </thead>
+            <tbody><!-- Filled by reports.js --></tbody>
+          </table>
+        </div>
+        <div class="flex items-center justify-between px-5 py-3 border-t border-gray-100">
+          <span id="pageInfo" class="text-xs text-gray-400">Page 1</span>
+          <div class="flex items-center gap-2">
+            <button id="prevPage" class="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 text-gray-500 hover:border-emerald-300 hover:text-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"><i class="fa-solid fa-chevron-left text-xs"></i> Prev</button>
+            <button id="nextPage" class="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 text-gray-500 hover:border-emerald-300 hover:text-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">Next <i class="fa-solid fa-chevron-right text-xs"></i></button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="/js/header.js"></script>
+  <script src="/js/reports.js"></script>
+  <script>
+    loadHeader();
+    $(function() { $("#sidebar-placeholder").load("/components/sidebar.html"); });
+
+    // Restore filter select values from URL
+    (function() {
+      const p = new URLSearchParams(window.location.search);
+      if (p.get('farm'))  document.getElementById('farmSelect').value  = p.get('farm');
+      if (p.get('grade')) document.getElementById('gradeSelect').value = p.get('grade');
+      if (p.get('range')) document.getElementById('rangeSelect').value = p.get('range');
+      if (p.get('start')) document.getElementById('startDate').value   = p.get('start');
+      if (p.get('end'))   document.getElementById('endDate').value     = p.get('end');
+    })();
+
+    function exportToPDF2() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const now = new Date();
+      const pageWidth = doc.internal.pageSize.getWidth();
+      doc.setFontSize(10); doc.setFont("helvetica","normal");
+      const tsText = now.toLocaleString();
+      doc.text(tsText, pageWidth - doc.getTextWidth(tsText) - 14, 10);
+      const title = "Block Report Record (Weights in Kilograms)";
+      doc.setFontSize(16); doc.setFont("helvetica","bold");
+      doc.text(title, (pageWidth - doc.getTextWidth(title)) / 2, 16);
+      const tv = document.getElementById('tableView');
+      const wasHidden = tv.style.display === 'none';
+      if (wasHidden) tv.style.display = '';
+      const pdfRows = [];
+      document.querySelectorAll("#dataTable tbody tr").forEach(tr => {
+        const rowData = [];
+        tr.querySelectorAll("td").forEach(td => rowData.push(td.innerText.trim()));
+        if (rowData.length > 1) pdfRows.push(rowData);
+      });
+      if (wasHidden) tv.style.display = 'none';
+      doc.autoTable({
+        head:[["No","Block","Date","25BCP (kg)","30BCP (kg)","33BCP (kg)","30TR (kg)","IF36TR (kg)","IF38TR (kg)","Total (kg)","Boxes"]],
+        body: pdfRows, startY:24, theme:'grid',
+        headStyles:{fillColor:[6,95,70],textColor:255,fontStyle:'bold',halign:'center'},
+        styles:{halign:'center',fontSize:9},
+      });
+      doc.save(`Reports_${now.toISOString().slice(0,10)}.pdf`);
+    }
+  </script>
+</body>
+</html>

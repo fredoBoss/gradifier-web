@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — Gradifier</title>
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="stylesheet" href="/src/styles.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Poppins:wght@300;400;500;600&display=swap');
+    * { font-family: 'Poppins', sans-serif; }
+    .font-brand { font-family: 'Montserrat', sans-serif; }
+    .hero-bg { background: linear-gradient(135deg, #064e3b 0%, #065f46 40%, #047857 100%); }
+    .card-glass { background: rgba(255,255,255,0.08); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.18); }
+    .input-field { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.2); color: white; transition: border-color 0.2s, background 0.2s; }
+    .input-field::placeholder { color: rgba(255,255,255,0.35); }
+    .input-field:focus { outline: none; border-color: #34d399; background: rgba(255,255,255,0.12); }
+    .btn-submit { background: linear-gradient(135deg, #10b981, #059669); transition: all 0.25s ease; box-shadow: 0 4px 18px rgba(16,185,129,0.35); }
+    .btn-submit:hover { background: linear-gradient(135deg, #34d399, #10b981); box-shadow: 0 6px 24px rgba(16,185,129,0.5); transform: translateY(-1px); }
+    .alert-error { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); color: #fca5a5; }
+    .alert-success { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.4); color: #6ee7b7; }
+    input:-webkit-autofill, input:-webkit-autofill:focus { -webkit-box-shadow: 0 0 0 100px #065f46 inset; -webkit-text-fill-color: white; }
+    .toggle-pw { color: rgba(255,255,255,0.45); transition: color 0.2s; }
+    .toggle-pw:hover { color: rgba(255,255,255,0.85); }
+    input[type="checkbox"] { accent-color: #10b981; }
+  </style>
+</head>
+<body class="hero-bg min-h-screen flex items-start sm:items-center justify-center px-4 py-8 overflow-y-auto overflow-x-hidden">
+
+  <div class="w-full max-w-sm">
+    <div class="text-center mb-6 sm:mb-8">
+      <a href="/" class="inline-block no-underline">
+        <h1 class="font-brand text-4xl font-black text-white tracking-tight">GRADI<span class="text-emerald-400">FIER</span></h1>
+      </a>
+      <p class="text-emerald-200/60 text-xs mt-1 tracking-wide">Banana Sorting & Grading System</p>
+    </div>
+
+    <div class="card-glass rounded-3xl p-6 sm:p-8 shadow-2xl">
+      <h2 class="text-white text-xl font-semibold mb-1">Welcome back</h2>
+      <p class="text-emerald-200/50 text-xs mb-6">Sign in to your account to continue</p>
+
+      <div id="alertBox" class="hidden rounded-xl px-4 py-3 mb-5 text-sm flex items-start gap-2"></div>
+
+      <form id="loginForm" class="flex flex-col gap-5">
+        <div>
+          <label class="block text-emerald-200/80 text-xs font-medium mb-1.5 uppercase tracking-wider">Email</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-400/60 text-sm"><i class="fa-solid fa-envelope"></i></span>
+            <input type="email" id="email" required placeholder="you@example.com" class="input-field w-full rounded-xl pl-9 pr-4 py-2.5 text-sm" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-emerald-200/80 text-xs font-medium mb-1.5 uppercase tracking-wider">Password</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-400/60 text-sm"><i class="fa-solid fa-lock"></i></span>
+            <input type="password" id="password" required placeholder="••••••••" class="input-field w-full rounded-xl pl-9 pr-10 py-2.5 text-sm" />
+            <button type="button" onclick="togglePassword()" class="toggle-pw absolute right-3 top-1/2 -translate-y-1/2 text-sm focus:outline-none">
+              <i id="eye-icon" class="fa-solid fa-eye"></i>
+              <i id="eye-off-icon" class="fa-solid fa-eye-slash hidden"></i>
+            </button>
+          </div>
+        </div>
+        <div class="flex items-center justify-between">
+          <label class="flex items-center gap-2 cursor-pointer select-none text-xs" style="color:rgba(255,255,255,0.65);">
+            <input type="checkbox" class="rounded" /> Remember me
+          </label>
+          <a href="/forgot_password" class="text-emerald-400 hover:text-emerald-300 text-xs transition-colors no-underline">Forgot password?</a>
+        </div>
+        <button type="submit" id="submitBtn" class="btn-submit text-white font-semibold text-sm py-3 rounded-xl w-full flex items-center justify-center gap-2">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In
+        </button>
+      </form>
+    </div>
+
+    <div class="text-center mt-5">
+      <a href="/" class="text-emerald-200/70 hover:text-emerald-100 text-xs inline-flex items-center gap-1.5 px-4 py-2 rounded-xl no-underline transition-colors" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);">
+        <i class="fa-solid fa-arrow-left text-xs"></i> Back to Home
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // Redirect if already logged in
+    fetch('/api/user').then(r => { if (r.ok) window.location.href = '/dashboard'; });
+
+    function togglePassword() {
+      const input = document.getElementById('password');
+      const eye = document.getElementById('eye-icon');
+      const eyeOff = document.getElementById('eye-off-icon');
+      const isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      eye.classList.toggle('hidden', isHidden);
+      eyeOff.classList.toggle('hidden', !isHidden);
+    }
+
+    function showAlert(msg, isError) {
+      const box = document.getElementById('alertBox');
+      box.className = `rounded-xl px-4 py-3 mb-5 text-sm flex items-start gap-2 ${isError ? 'alert-error' : 'alert-success'}`;
+      box.innerHTML = `<i class="fa-solid ${isError ? 'fa-circle-exclamation' : 'fa-circle-check'} mt-0.5 flex-shrink-0"></i><span>${msg}</span>`;
+      box.classList.remove('hidden');
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Signing in…';
+
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email:    document.getElementById('email').value,
+          password: document.getElementById('password').value,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        showAlert('Login successful! Redirecting…', false);
+        setTimeout(() => window.location.href = '/dashboard', 800);
+      } else {
+        showAlert(data.error || 'Incorrect credentials', true);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In';
+      }
+    });
+  </script>
+</body>
+</html>
