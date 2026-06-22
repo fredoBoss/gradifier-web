@@ -17,11 +17,15 @@
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Poppins:wght@300;400;500;600&display=swap');
     * { font-family:'Poppins',sans-serif; } .font-brand{font-family:'Montserrat',sans-serif;}
     select{appearance:none;-webkit-appearance:none;} tbody tr:hover{background:#f0fdf4!important;}
-    .flatpickr-day{position:relative!important;}
-    .flatpickr-day.selected,.flatpickr-day.selected:hover{background:#059669!important;border-color:#059669!important;}
-    .flatpickr-day:hover:not(.selected){background:#d1fae5!important;} .flatpickr-day.today{border-color:#10b981!important;}
-    .harvest-dot{width:5px;height:5px;background:#10b981;border-radius:50%;position:absolute;bottom:2px;left:50%;transform:translateX(-50%);display:block;}
-    .flatpickr-day.selected .harvest-dot{background:#fff;}
+    .flatpickr-day.selected,.flatpickr-day.selected:hover,
+    .flatpickr-day.startRange,.flatpickr-day.startRange:hover,
+    .flatpickr-day.endRange,.flatpickr-day.endRange:hover{background:#059669!important;border-color:#059669!important;color:#fff!important;}
+    .flatpickr-day.inRange{background:#d1fae5!important;border-color:transparent!important;box-shadow:-5px 0 0 #d1fae5,5px 0 0 #d1fae5!important;}
+    .flatpickr-day.has-harvest:not(.selected):not(.startRange):not(.endRange){background:#bbf7d0!important;border-color:#34d399!important;color:#065f46!important;font-weight:600!important;}
+    .flatpickr-day.has-harvest.inRange{background:#6ee7b7!important;box-shadow:-5px 0 0 #6ee7b7,5px 0 0 #6ee7b7!important;}
+    .flatpickr-day:hover:not(.selected):not(.startRange):not(.endRange):not(.has-harvest){background:#d1fae5!important;}
+    .flatpickr-day.has-harvest:not(.selected):not(.startRange):not(.endRange):hover{background:#6ee7b7!important;border-color:#10b981!important;}
+    .flatpickr-day.today:not(.selected):not(.startRange):not(.endRange){border-color:#10b981!important;}
     .flatpickr-input{background:#f9fafb;border:1px solid #e5e7eb;color:#374151;font-size:.875rem;border-radius:.75rem;padding:.5rem .75rem;width:100%;outline:none;cursor:pointer;}
     .flatpickr-input:focus{border-color:#34d399;box-shadow:0 0 0 1px #d1fae5;}
   </style>

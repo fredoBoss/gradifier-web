@@ -238,11 +238,8 @@ async function loadReports() {
     mode:'range', dateFormat:'Y-m-d', maxDate:'today',
     defaultDate: (selStart && selEnd) ? [selStart, selEnd] : (selStart ? [selStart] : null),
     onDayCreate(dObj, dStr, fp, dayElem) {
-      const ds = fmtDate(dayElem.dateObj);
-      if (availableDates.includes(ds)) {
-        const dot = document.createElement('span');
-        dot.className = 'harvest-dot';
-        dayElem.appendChild(dot);
+      if (availableDates.includes(fmtDate(dayElem.dateObj))) {
+        dayElem.classList.add('has-harvest');
       }
     },
     onClose(selectedDates) {

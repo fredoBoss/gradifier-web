@@ -147,7 +147,7 @@ async function loadLogs() {
     defaultDate:(selStart&&selEnd)?[selStart,selEnd]:(selStart?[selStart]:null),
     onDayCreate(dObj,dStr,fp,dayElem){
       if((data.available_dates||[]).includes(fmtDate(dayElem.dateObj))){
-        const dot=document.createElement('span'); dot.className='harvest-dot'; dayElem.appendChild(dot);
+        dayElem.classList.add('has-harvest');
       }
     },
     onClose(selectedDates){
