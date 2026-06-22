@@ -8,7 +8,7 @@ module.exports = async function handler(req, res) {
   if (!user) return;
 
   const pool = getPool();
-  const { action, name, email, current_password, new_password, confirm_password } = req.body || {};
+  const { action, name, email, photo, current_password, new_password, confirm_password } = req.body || {};
 
   try {
     if (action === 'change_password') {
@@ -35,10 +35,20 @@ module.exports = async function handler(req, res) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
       return res.status(400).json({ error: 'Invalid email format' });
 
-    await pool.execute(
-      'UPDATE user SET name = ?, email = ? WHERE id = ?',
-      [name.trim(), email.trim(), user.id]
-    );
+    const photoData = (photo && typeof photo === 'string' && photo.startsWith('data:image/')) ? photo : null;
+
+    if (photoData) {
+      await pool.execute('ALTER TABLE user MODIFY COLUMN photo MEDIUMTEXT');
+      await pool.execute(
+        'UPDATE user SET name = ?, email = ?, photo = ? WHERE id = ?',
+        [name.trim(), email.trim(), photoData, user.id]
+      );
+    } else {
+      await pool.execute(
+        'UPDATE user SET name = ?, email = ? WHERE id = ?',
+        [name.trim(), email.trim(), user.id]
+      );
+    }
     res.json({ success: true, message: 'Profile updated successfully' });
   } catch (err) {
     console.error(err);

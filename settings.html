@@ -44,7 +44,7 @@
             <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600"><i class="fa-solid fa-user text-sm"></i></div>
             <div>
               <h2 class="text-base font-semibold text-gray-800">Personal Information</h2>
-              <p class="text-xs text-gray-400">Update your name and email</p>
+              <p class="text-xs text-gray-400">Update your name, email, and photo</p>
             </div>
           </div>
 
@@ -54,10 +54,15 @@
             <div class="flex items-center gap-4">
               <div class="relative flex-shrink-0">
                 <img id="photoPreview" src="/img/fred.png" alt="Profile" class="w-16 h-16 rounded-full object-cover border-2 border-gray-200" />
+                <label for="profilePic" class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center cursor-pointer shadow-sm" style="background:#065f46;" title="Change photo">
+                  <i class="fa-solid fa-pen text-white" style="font-size:9px;"></i>
+                </label>
               </div>
               <div class="min-w-0">
                 <p id="currentName" class="text-sm font-medium text-gray-700">Your Name</p>
                 <p id="currentEmail" class="text-xs text-gray-400 truncate">your@email.com</p>
+                <input type="file" id="profilePic" accept="image/*" class="hidden" onchange="previewPhoto(this)" />
+                <label for="profilePic" class="text-xs text-emerald-600 hover:text-emerald-700 cursor-pointer mt-0.5 inline-block">Choose new photo</label>
               </div>
             </div>
             <div>

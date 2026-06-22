@@ -28,6 +28,25 @@ function previewPhoto(input) {
 }
 window.previewPhoto = previewPhoto;
 
+function resizeImage(file, maxPx = 300, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const scale = Math.min(maxPx / img.width, maxPx / img.height, 1);
+      const w = Math.round(img.width * scale);
+      const h = Math.round(img.height * scale);
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Failed to load image')); };
+    img.src = url;
+  });
+}
+
 function togglePasswordVisibility(inputId, iconId) {
   const input = document.getElementById(inputId);
   const icon  = document.getElementById(iconId);
@@ -86,14 +105,26 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     const name  = document.getElementById('inputName').value.trim();
     const email = document.getElementById('inputEmail').value.trim();
+    const body  = { name, email };
+
+    const picInput = document.getElementById('profilePic');
+    if (picInput && picInput.files && picInput.files[0]) {
+      try {
+        body.photo = await resizeImage(picInput.files[0]);
+      } catch {
+        showMsg('profileMsg', 'Failed to process image. Try another file.', true);
+        return;
+      }
+    }
+
     const res = await fetch('/api/update-profile', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ name, email }),
+      body: JSON.stringify(body),
     });
     const data = await res.json();
     showMsg('profileMsg', data.message || data.error, !res.ok);
-    if (res.ok) loadSettings();
+    if (res.ok) { picInput && (picInput.value = ''); loadSettings(); }
   });
 
   // Password form
