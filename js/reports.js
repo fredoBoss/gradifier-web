@@ -222,6 +222,11 @@ async function loadReports() {
   const res = await fetch('/api/reports?' + params.toString());
   if (res.status === 401) { window.location.href = '/login'; return; }
   const data = await res.json();
+  if (!res.ok || data.error) {
+    document.getElementById('harvest-summary').innerHTML =
+      `<p class="text-sm text-red-500 p-2">Failed to load data: ${data.error || 'Server error'}</p>`;
+    return;
+  }
 
   renderBoxes(data.boxes_per_grade);
   renderHarvest(data);

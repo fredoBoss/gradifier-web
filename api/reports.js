@@ -40,7 +40,8 @@ module.exports = async function handler(req, res) {
         SUM(CASE WHEN \`Classes\`='IF38TR' THEN weight/1000 ELSE 0 END) AS \`IF38TR\`,
         SUM(weight/1000) AS total_weight
         FROM \`Finger_classes\`${w}
-        GROUP BY \`Farm\`, DATE(\`timestamp\`) ORDER BY DATE(\`timestamp\`) DESC`,
+        GROUP BY \`Farm\`, DATE_FORMAT(\`timestamp\`, '%Y-%m-%d')
+        ORDER BY DATE_FORMAT(\`timestamp\`, '%Y-%m-%d') DESC`,
       params
     );
 
@@ -53,7 +54,8 @@ module.exports = async function handler(req, res) {
         SUM(CASE WHEN \`Classes\`='IF36TR' THEN weight/1000 ELSE 0 END) AS \`IF36TR\`,
         SUM(CASE WHEN \`Classes\`='IF38TR' THEN weight/1000 ELSE 0 END) AS \`IF38TR\`
         FROM \`Finger_classes\`${w}
-        GROUP BY DATE(\`timestamp\`) ORDER BY DATE(\`timestamp\`) ASC`,
+        GROUP BY DATE_FORMAT(\`timestamp\`, '%Y-%m-%d')
+        ORDER BY DATE_FORMAT(\`timestamp\`, '%Y-%m-%d') ASC`,
       params
     );
 
