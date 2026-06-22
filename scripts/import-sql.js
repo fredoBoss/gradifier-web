@@ -1,7 +1,7 @@
 const mysql = require('mysql2/promise');
 
-const DB_URL = process.env.DB_URL;
-if (!DB_URL) { console.error('❌ DB_URL env var is not set'); process.exit(1); }
+const DB_URL = process.env.DATABASE_URL;
+if (!DB_URL) { console.error('❌ DATABASE_URL env var is not set'); process.exit(1); }
 
 const statements = [
 

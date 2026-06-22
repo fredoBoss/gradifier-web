@@ -23,7 +23,7 @@
     <ul class="space-y-0.5">
 
       <li>
-        <a href="dashboard.php" id="dashboardLink"
+        <a href="/dashboard" id="dashboardLink"
           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors no-underline"
           style="color:rgba(255,255,255,0.65);"
           onmouseover="if(!this.classList.contains('active-link'))this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff'"
@@ -34,7 +34,7 @@
       </li>
 
       <li>
-        <a href="reports.php" id="reportsLink"
+        <a href="/reports" id="reportsLink"
           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors no-underline"
           style="color:rgba(255,255,255,0.65);"
           onmouseover="if(!this.classList.contains('active-link'))this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff'"
@@ -45,7 +45,7 @@
       </li>
 
       <li>
-        <a href="logs.php" id="logsLink"
+        <a href="/logs" id="logsLink"
           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors no-underline"
           style="color:rgba(255,255,255,0.65);"
           onmouseover="if(!this.classList.contains('active-link'))this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff'"
@@ -56,7 +56,7 @@
       </li>
 
       <li>
-        <a href="settings.php" id="settingsLink"
+        <a href="/settings" id="settingsLink"
           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors no-underline"
           style="color:rgba(255,255,255,0.65);"
           onmouseover="if(!this.classList.contains('active-link'))this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff'"
@@ -74,14 +74,14 @@
   (function () {
     const currentPath = window.location.pathname;
     const links = {
-      'dashboard.php': document.getElementById('dashboardLink'),
-      'reports.php':   document.getElementById('reportsLink'),
-      'logs.php':      document.getElementById('logsLink'),
-      'settings.php':  document.getElementById('settingsLink'),
+      '/dashboard': document.getElementById('dashboardLink'),
+      '/reports':   document.getElementById('reportsLink'),
+      '/logs':      document.getElementById('logsLink'),
+      '/settings':  document.getElementById('settingsLink'),
     };
     for (const path in links) {
       const el = links[path];
-      if (el && currentPath.endsWith(path)) {
+      if (el && currentPath.startsWith(path)) {
         el.classList.add('active-link');
         el.style.background = 'rgba(255,255,255,0.15)';
         el.style.color = '#fff';

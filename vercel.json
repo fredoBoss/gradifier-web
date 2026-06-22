@@ -1,6 +1,12 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "rewrites": [
+    { "source": "/login",     "destination": "/login.html" },
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/logs",      "destination": "/logs.html" },
+    { "source": "/reports",   "destination": "/reports.html" }
+  ],
   "headers": [
     {
       "source": "/api/(.*)",
