@@ -31,7 +31,7 @@ module.exports = async function handler(req, res) {
   const pool = getPool();
   try {
     const [tableRows] = await pool.execute(
-      `SELECT \`Farm\`, DATE(\`timestamp\`) AS \`date\`,
+      `SELECT \`Farm\`, DATE_FORMAT(\`timestamp\`, '%Y-%m-%d') AS \`date\`,
         SUM(CASE WHEN \`Classes\`='25BCP'  THEN weight/1000 ELSE 0 END) AS \`25BCP\`,
         SUM(CASE WHEN \`Classes\`='30BCP'  THEN weight/1000 ELSE 0 END) AS \`30BCP\`,
         SUM(CASE WHEN \`Classes\`='33BCP'  THEN weight/1000 ELSE 0 END) AS \`33BCP\`,
@@ -45,7 +45,7 @@ module.exports = async function handler(req, res) {
     );
 
     const [chartRows] = await pool.execute(
-      `SELECT DATE(\`timestamp\`) AS \`date\`,
+      `SELECT DATE_FORMAT(\`timestamp\`, '%Y-%m-%d') AS \`date\`,
         SUM(CASE WHEN \`Classes\`='25BCP'  THEN weight/1000 ELSE 0 END) AS \`25BCP\`,
         SUM(CASE WHEN \`Classes\`='30BCP'  THEN weight/1000 ELSE 0 END) AS \`30BCP\`,
         SUM(CASE WHEN \`Classes\`='33BCP'  THEN weight/1000 ELSE 0 END) AS \`33BCP\`,
@@ -58,7 +58,7 @@ module.exports = async function handler(req, res) {
     );
 
     const [dateRows] = await pool.execute(
-      `SELECT DISTINCT DATE(\`timestamp\`) AS d FROM \`Finger_classes\`${w} ORDER BY d`,
+      `SELECT DISTINCT DATE_FORMAT(\`timestamp\`, '%Y-%m-%d') AS d FROM \`Finger_classes\`${w} ORDER BY d`,
       params
     );
 

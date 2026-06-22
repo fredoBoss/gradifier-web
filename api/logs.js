@@ -36,7 +36,7 @@ module.exports = async function handler(req, res) {
   try {
     const [rows] = await pool.execute(
       `SELECT id, classes_name, size, Farm, Classes, weight, conf,
-              DATE(timestamp) AS timestamp
+              DATE_FORMAT(timestamp, '%Y-%m-%d') AS timestamp
        FROM Finger_classes${w} ORDER BY timestamp DESC`,
       params
     );
@@ -47,7 +47,7 @@ module.exports = async function handler(req, res) {
     );
 
     const [dateRows] = await pool.execute(
-      'SELECT DISTINCT DATE(timestamp) AS d FROM Finger_classes ORDER BY d DESC'
+      'SELECT DISTINCT DATE_FORMAT(timestamp, \'%Y-%m-%d\') AS d FROM Finger_classes ORDER BY d DESC'
     );
 
     const [sizeRows] = await pool.execute(
